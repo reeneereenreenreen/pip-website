@@ -2,10 +2,655 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>My Vercel Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>One-Click PiP for Any Video</title>
+    <meta
+      name="description"
+      content="One-Click PiP for Any Video brings smooth picture-in-picture to your Chrome workflow. Open the best video on any page in one click."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4efe6;
+        --surface: rgba(255, 255, 255, 0.7);
+        --ink: #14222b;
+        --muted: #51616b;
+        --accent: #0e8a7a;
+        --accent-strong: #06665a;
+        --sun: #f6a259;
+        --line: rgba(20, 34, 43, 0.12);
+        --shadow: 0 14px 40px rgba(17, 35, 43, 0.12);
+        --radius: 24px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 5% 10%, rgba(14, 138, 122, 0.16), transparent 42%),
+          radial-gradient(circle at 90% 12%, rgba(246, 162, 89, 0.2), transparent 46%),
+          linear-gradient(180deg, #fdf9f3 0%, var(--bg) 60%, #f2ece2 100%);
+        color: var(--ink);
+        font-family: "DM Sans", "Segoe UI", sans-serif;
+        line-height: 1.5;
+        overflow-x: hidden;
+      }
+
+      .grain {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: radial-gradient(rgba(20, 34, 43, 0.05) 0.4px, transparent 0.4px);
+        background-size: 3px 3px;
+        opacity: 0.22;
+        z-index: -1;
+      }
+
+      .wrap {
+        width: min(1120px, 92vw);
+        margin: 0 auto;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(10px);
+        background: rgba(253, 249, 243, 0.7);
+        border-bottom: 1px solid rgba(20, 34, 43, 0.08);
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 0;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-family: "Outfit", sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .logo {
+        width: 34px;
+        height: 34px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 10px;
+        background: linear-gradient(145deg, var(--accent), #53b5a9);
+        color: #fff;
+        font-size: 18px;
+      }
+
+      .nav-cta {
+        text-decoration: none;
+        color: #fff;
+        background: var(--ink);
+        border-radius: 999px;
+        padding: 0.62rem 1rem;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition: transform 200ms ease, background 200ms ease;
+      }
+
+      .nav-cta:hover {
+        transform: translateY(-2px);
+        background: #0e1a20;
+      }
+
+      .hero {
+        padding: 4.2rem 0 2.3rem;
+        position: relative;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border: 1px solid rgba(14, 138, 122, 0.3);
+        color: var(--accent-strong);
+        background: rgba(14, 138, 122, 0.09);
+        border-radius: 999px;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.84rem;
+        font-weight: 600;
+      }
+
+      h1 {
+        margin: 0.9rem 0 0.75rem;
+        max-width: 11.5ch;
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(2.1rem, 7vw, 4.6rem);
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+      }
+
+      .hero-grid {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: 1.1fr 1fr;
+        align-items: center;
+      }
+
+      .lead {
+        max-width: 60ch;
+        color: var(--muted);
+        font-size: clamp(1rem, 2.4vw, 1.2rem);
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 1.35rem;
+      }
+
+      .btn {
+        border: 0;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        border-radius: 14px;
+        padding: 0.82rem 1.15rem;
+        transition: transform 220ms ease, box-shadow 220ms ease;
+      }
+
+      .btn-primary {
+        color: #fff;
+        background: linear-gradient(135deg, var(--accent), #2ba593);
+        box-shadow: 0 10px 24px rgba(14, 138, 122, 0.32);
+      }
+
+      .btn-secondary {
+        color: var(--ink);
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .showcase {
+        position: relative;
+        min-height: 360px;
+      }
+
+      .browser {
+        position: relative;
+        background: linear-gradient(180deg, #f6faf9 0%, #f2f7f5 100%);
+        border: 1px solid rgba(20, 34, 43, 0.12);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 1rem;
+        transform: rotate(-2deg);
+      }
+
+      .browser-top {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #c7d2d8;
+      }
+
+      .address {
+        flex: 1;
+        border-radius: 8px;
+        background: #fff;
+        border: 1px solid rgba(20, 34, 43, 0.09);
+        color: #7b8b94;
+        font-size: 0.8rem;
+        padding: 0.42rem 0.62rem;
+      }
+
+      .video {
+        position: relative;
+        border-radius: 18px;
+        height: 250px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 80% 10%, rgba(246, 162, 89, 0.32), transparent 40%),
+          linear-gradient(140deg, #23454e, #172932 40%, #0f1b22 100%);
+      }
+
+      .video::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 42%;
+        background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+      }
+
+      .video-label {
+        position: absolute;
+        left: 1rem;
+        bottom: 0.8rem;
+        z-index: 1;
+        font-size: 0.92rem;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .pip-window {
+        position: absolute;
+        right: -16px;
+        bottom: -22px;
+        width: 210px;
+        border-radius: 16px;
+        border: 1px solid rgba(20, 34, 43, 0.14);
+        background: #f8fcfb;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        animation: float 4.6s ease-in-out infinite;
+      }
+
+      .pip-head {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.72rem;
+        color: #5c6f78;
+        border-bottom: 1px solid rgba(20, 34, 43, 0.08);
+      }
+
+      .pip-screen {
+        height: 106px;
+        background:
+          radial-gradient(circle at 80% 12%, rgba(246, 162, 89, 0.3), transparent 34%),
+          linear-gradient(130deg, #244951, #0f1f25);
+        position: relative;
+      }
+
+      .pip-screen::before {
+        content: "PiP Active";
+        position: absolute;
+        left: 0.6rem;
+        bottom: 0.55rem;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .section {
+        padding: 2.8rem 0;
+      }
+
+      .surface {
+        background: var(--surface);
+        border: 1px solid rgba(20, 34, 43, 0.09);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .stats {
+        padding: 1rem;
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .stat {
+        background: rgba(255, 255, 255, 0.82);
+        border-radius: 16px;
+        padding: 1rem;
+      }
+
+      .stat strong {
+        display: block;
+        font-family: "Outfit", sans-serif;
+        font-size: 1.5rem;
+        line-height: 1;
+        margin-bottom: 0.35rem;
+      }
+
+      .stat span {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .section-head {
+        font-family: "Outfit", sans-serif;
+        margin: 0;
+        font-size: clamp(1.5rem, 4vw, 2.4rem);
+        letter-spacing: -0.02em;
+      }
+
+      .sub {
+        color: var(--muted);
+        max-width: 65ch;
+        margin-top: 0.75rem;
+      }
+
+      .features {
+        margin-top: 1.1rem;
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .feature {
+        padding: 1rem;
+        border-radius: 16px;
+        border: 1px solid rgba(20, 34, 43, 0.1);
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .feature h3 {
+        margin: 0 0 0.35rem;
+        font-family: "Outfit", sans-serif;
+        font-size: 1.02rem;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.93rem;
+      }
+
+      .steps {
+        margin-top: 1rem;
+        padding: 1rem;
+        display: grid;
+        gap: 0.85rem;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .step {
+        border-radius: 14px;
+        padding: 0.9rem;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(20, 34, 43, 0.09);
+      }
+
+      .step .num {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        background: rgba(14, 138, 122, 0.14);
+        color: var(--accent-strong);
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .step p {
+        margin: 0.65rem 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .cta {
+        margin: 0.8rem 0 4rem;
+        padding: 1.4rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+      }
+
+      .cta h3 {
+        margin: 0;
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(1.3rem, 3.4vw, 1.95rem);
+        line-height: 1.1;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 500ms ease, transform 600ms ease;
+      }
+
+      .reveal.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      footer {
+        color: #5f7078;
+        font-size: 0.86rem;
+        padding-bottom: 1.5rem;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .showcase {
+          min-height: 300px;
+          max-width: 560px;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .features {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .steps {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .nav-inner {
+          gap: 0.8rem;
+          flex-wrap: wrap;
+        }
+
+        .hero {
+          padding-top: 2.8rem;
+        }
+
+        .browser {
+          transform: none;
+        }
+
+        .pip-window {
+          position: relative;
+          right: auto;
+          bottom: auto;
+          width: 100%;
+          margin-top: 0.7rem;
+          animation: none;
+        }
+
+        .stats,
+        .features,
+        .steps {
+          grid-template-columns: 1fr;
+        }
+
+        .cta {
+          padding: 1.05rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello from Vercel</h1>
-    <p>This is a simple static page.</p>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <div class="brand">
+          <span class="logo">▣</span>
+          <span>One-Click PiP</span>
+        </div>
+        <a class="nav-cta" href="#install">Install in 30 seconds</a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero reveal">
+        <span class="pill">Built for Chrome • Manifest V3</span>
+        <div class="hero-grid">
+          <div>
+            <h1>Pop Any Video Out. Keep Your Flow.</h1>
+            <p class="lead">
+              One-Click PiP finds the best video on your current tab and opens it in Picture-in-Picture.
+              You keep watching while you browse, write, or work.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#install">Install Extension</a>
+              <a class="btn btn-secondary" href="#features">See Features</a>
+            </div>
+          </div>
+
+          <div class="showcase reveal" aria-hidden="true">
+            <div class="browser">
+              <div class="browser-top">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="address">youtube.com/watch?v=smooth-pip-demo</span>
+              </div>
+              <div class="video">
+                <span class="video-label">Now playing: Focus Session Mix</span>
+              </div>
+            </div>
+            <div class="pip-window">
+              <div class="pip-head">Picture-in-Picture Window</div>
+              <div class="pip-screen"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="surface stats">
+          <article class="stat">
+            <strong>1 click</strong>
+            <span>from tab to floating player</span>
+          </article>
+          <article class="stat">
+            <strong>All frames</strong>
+            <span>checks embedded and nested videos</span>
+          </article>
+          <article class="stat">
+            <strong>Smart pick</strong>
+            <span>prioritizes active and visible players</span>
+          </article>
+          <article class="stat">
+            <strong>Adaptive icon</strong>
+            <span>changes with PiP state and color scheme</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal" id="features">
+        <h2 class="section-head">Designed for Real Browsing, Not Demo Videos</h2>
+        <p class="sub">
+          Use it with direct players, embeds, and complex pages. The extension scans available videos and
+          chooses a strong candidate fast, so PiP feels instant.
+        </p>
+        <div class="features">
+          <article class="feature">
+            <h3>Works Across Sites</h3>
+            <p>Compatible with standard video tags and many embedded players where browser policy allows.</p>
+          </article>
+          <article class="feature">
+            <h3>Frame-Aware Detection</h3>
+            <p>Searches through the active tab and frame contexts to find your best viewing target.</p>
+          </article>
+          <article class="feature">
+            <h3>Clear Feedback</h3>
+            <p>Shows lightweight success or error toasts so you always know what happened.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal" id="install">
+        <h2 class="section-head">Install in Under a Minute</h2>
+        <p class="sub">Load the unpacked extension and start using PiP right away.</p>
+        <div class="surface steps">
+          <article class="step">
+            <span class="num">1</span>
+            <p>Open <strong>chrome://extensions</strong> in Chrome.</p>
+          </article>
+          <article class="step">
+            <span class="num">2</span>
+            <p>Enable <strong>Developer mode</strong>.</p>
+          </article>
+          <article class="step">
+            <span class="num">3</span>
+            <p>Click <strong>Load unpacked</strong> and select your PiP extension folder.</p>
+          </article>
+          <article class="step">
+            <span class="num">4</span>
+            <p>Play a video, click the toolbar icon, and enjoy PiP.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="surface cta reveal">
+        <h3>Stay on Task While Your Video Stays in View.</h3>
+        <a class="btn btn-primary" href="#install">Start with One-Click PiP</a>
+      </section>
+
+      <footer>
+        One-Click PiP for Any Video • Lightweight Chrome extension for frictionless multitasking.
+      </footer>
+    </main>
+
+    <script>
+      const revealItems = document.querySelectorAll(".reveal");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("show");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.16 }
+      );
+
+      revealItems.forEach((item) => observer.observe(item));
+    </script>
   </body>
 </html>
